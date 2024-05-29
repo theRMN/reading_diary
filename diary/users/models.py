@@ -17,5 +17,5 @@ class CustomUser(AbstractUser):
 
 
 class UserSettings(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='user_settings')
     expected_pages_per_day = models.PositiveIntegerField(default=0)
