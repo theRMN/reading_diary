@@ -11,6 +11,12 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = ('id', 'name', 'goal_state',)
 
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        validated_data['user'] = user
+
+        return super().create(validated_data)
+
 
 class NoteSerializer(serializers.ModelSerializer):
 
