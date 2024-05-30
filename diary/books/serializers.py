@@ -1,4 +1,5 @@
 from datetime import datetime
+from django.db.models import Sum
 from rest_framework import serializers
 
 from .models import Book, Note
@@ -19,12 +20,10 @@ class NoteSerializer(serializers.ModelSerializer):
         read_only_fields = ('date', 'time',)
 
     def create(self, validated_data):
-        book = Book.objects.get(id=validated_data.get('book').id)
-        request = self.context.get('request', None)
-        user_settings_pages = request.user.user_settings.expected_pages_per_day
-        objects = Note.objects.filter(date=datetime.now().date())
-        pages = sum([o.num_pages for o in objects])
-        total_pages = pages + validated_data.get('num_pages')
+        book = validated_data.get('book')
+        user_settings_pages = book.user.user_settings.expected_pages_per_day
+        pages_sum = Note.objects.filter(date=datetime.now().date()).aggregate(Sum('num_pages')).get('num_pages__sum')
+        total_pages = (pages_sum or 0) + validated_data.get('num_pages')
 
         if total_pages >= user_settings_pages:
             book.goal_state = True
