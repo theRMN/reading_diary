@@ -26,7 +26,6 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 class NoteViewSet(viewsets.ModelViewSet):
-    queryset = Note.objects.all()
     serializer_class = NoteSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SearchNote
